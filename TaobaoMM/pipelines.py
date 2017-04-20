@@ -34,21 +34,14 @@ class TaobaommPipeline(object):
 
     # insert the data to database
     def _conditional_insert(self, tx, item):
-        parms = (
-            item['avatarUrl'],
-            item['cardUrl'],
-            item['city'],
-            item['height'],
-            item['identityUrl'],
-            item['modelUrl'],
-            item['realName'],
-            item['totalFanNum'],
-            item['totalFavorNum'],
-            item['userId'],
-            item['viewFlag'],
-            item['weight']
-        )
-        sql = '''INSERT INTO taobao_mm(avatarUrl, cardUrl,city,height,identityUrl,modelUrl,realName,totalFanNum,totalFavorNum,userId,viewFlag,weight
-            )VALUES ('%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');''' % parms
-        #logging.debug(sql)
+        def create_sql():
+            k = ", ".join(tuple(item.keys()))
+            v = tuple(item.values())
+            parms = k, v
+            return "INSERT INTO taobao_mm(%s) VALUES %s;" % parms
+
+        sql = create_sql()
+        logging.debug(sql)
         tx.execute(sql)
+
+    
